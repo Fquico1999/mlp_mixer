@@ -27,11 +27,10 @@ def simple_accuracy(preds, labels):
     return (preds == labels).mean()
 
 
-def save_model(args, model):
+def save_model(model, output_dir, name):
     model_to_save = model.module if hasattr(model, 'module') else model
-    model_checkpoint = os.path.join(args.output_dir, "%s_checkpoint.bin" % args.name)
+    model_checkpoint = os.path.join(output_dir, "%s_checkpoint.bin" % name)
     torch.save(model_to_save.state_dict(), model_checkpoint)
-    logger.info("Saved model checkpoint to [DIR: %s]", args.output_dir)
 
 
 def setup(args):
@@ -57,7 +56,7 @@ def count_parameters(model):
 
 
 
-def valid(args, model, writer, test_loader, global_step):
+def valid(model, test_loader, global_step, device):
     # Validation!
     eval_losses = AverageMeter()
 
@@ -69,7 +68,7 @@ def valid(args, model, writer, test_loader, global_step):
                           dynamic_ncols=True)
     loss_fct = torch.nn.CrossEntropyLoss()
     for step, batch in enumerate(epoch_iterator):
-        batch = tuple(t.to(args.device) for t in batch)
+        batch = tuple(t.to(device) for t in batch)
         x, y = batch
         with torch.no_grad():
             logits = model(x)[0]
@@ -150,9 +149,9 @@ def train(model, data_dir, train_batch_size,eval_batch_size, gradient_accumulati
                     "Training (%d / %d Steps) (loss=%2.5f)" % (global_step, t_total, losses.val)
                 )
                 if global_step % eval_every == 0:
-                    accuracy = valid(args, model, writer, test_loader, global_step)
+                    accuracy = valid(model, test_loader, global_step, device)
                     if best_acc < accuracy:
-                        save_model(args, model)
+                        save_model(model, output_dir='.', name='Mixer-B_16')
                         best_acc = accuracy
                     model.train()
 
