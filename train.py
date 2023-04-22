@@ -4,6 +4,7 @@ from utils import get_data
 from utils import WarmupLinearSchedule, WarmupCosineSchedule
 import os
 from tqdm import tqdm
+import numpy as np
 import urllib.request
 
 class AverageMeter(object):
@@ -73,7 +74,7 @@ def valid(model, test_loader, global_step, device):
         with torch.no_grad():
             logits = model(x)[0]
 
-            eval_loss = loss_fct(logits, y)
+            eval_loss = loss_fct(logits.view(-1, model.n_classes), y.view(-1))
             eval_losses.update(eval_loss.item())
 
             preds = torch.argmax(logits, dim=-1)
