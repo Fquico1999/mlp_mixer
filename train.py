@@ -72,7 +72,7 @@ def valid(model, test_loader, global_step, device):
         batch = tuple(t.to(device) for t in batch)
         x, y = batch
         with torch.no_grad():
-            logits = model(x)[0]
+            logits = model(x)
 
             eval_loss = loss_fct(logits.view(-1, model.n_classes), y.view(-1))
             eval_losses.update(eval_loss.item())
@@ -93,6 +93,8 @@ def valid(model, test_loader, global_step, device):
 
     all_preds, all_label = all_preds[0], all_label[0]
     accuracy = simple_accuracy(all_preds, all_label)
+    print(f"Validation Results- Valid Loss: {eval_losses.avg} | Valid Accuracy: {accuracy}")
+
     return accuracy
 
 
@@ -211,7 +213,7 @@ if __name__ == "__main__":
     num_steps = 10000
     weight_decay = 0
     decay_type = "cosine"
-    eval_every = 100
+    eval_every = 1000
 
     # Training
     train(model, 
