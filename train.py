@@ -172,7 +172,7 @@ if __name__ == "__main__":
     
     url = 'https://storage.googleapis.com/mixer_models/imagenet21k/Mixer-B_16.npz'
     filename = 'Mixer-B_16.npz'
-    urllib.request.urlretrieve(url, filename)
+   # urllib.request.urlretrieve(url, filename)
 
     img_size = 224
     patch_size = 16
@@ -202,8 +202,8 @@ if __name__ == "__main__":
 
 
     # Training setup
-    train_batch_size = 512 # Total batch size for training
-    eval_batch_size = 512
+    train_batch_size = 16 # Total batch size for training
+    eval_batch_size = 16
     gradient_accumulation_steps = 1
     max_grad_norm = 1.0 
     learning_rate = 3e-2
